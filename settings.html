@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>장비 세팅 미리보기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background-color: #f1f5f9;
+        color: #0f172a;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* 입체적인 섹터 카드 디자인 (cable, equipment 동일 적용) */
+      .sector-card {
+        background: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 2.5rem;
+        padding: 2.5rem 1.5rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05),
+          0 20px 40px -10px rgba(0, 0, 0, 0.03),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        margin-bottom: 2.5rem;
+        position: relative;
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 0.35rem 0.85rem;
+        border-radius: 9999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .tag-session {
+        background: #f3e8ff;
+        color: #6b21a8;
+        border: 1px solid #e9d5ff;
+      }
+      .tag-singer {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+      }
+      .tag-speaker {
+        background: #ffedd5;
+        color: #c2410c;
+        border: 1px solid #fed7aa;
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 신호 흐름 화살표 애니메이션 */
+      @keyframes pulse-flow {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: translateX(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(4px) scale(1.1);
+          filter: drop-shadow(0 0 4px currentColor);
+        }
+      }
+      .animate-pulse-flow-1 {
+        animation: pulse-flow 1.5s infinite ease-in-out;
+      }
+      .animate-pulse-flow-2 {
+        animation: pulse-flow 1.5s infinite ease-in-out 0.2s;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen pb-32">
+    <!-- 상단 고정 네비게이션 -->
+    <nav
+      class="sticky top-0 bg-white/70 backdrop-blur-xl border-b border-white/20 z-40"
+    >
+      <div class="max-w-md mx-auto px-6 h-20 flex items-center justify-between">
+        <a
+          href="index.html"
+          class="p-2 bg-slate-100 rounded-full hover:bg-white transition-all shadow-inner active:scale-95"
+        >
+          <i data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i>
+        </a>
+        <h2
+          class="font-black text-slate-900 text-xs tracking-widest uppercase flex-1 text-center"
+        >
+          세팅 미리보기
+        </h2>
+        <div class="w-9"></div>
+      </div>
+    </nav>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="w-full max-w-md mx-auto px-6 mt-10 fade-in">
+      <!-- 헤더 및 탭 전환 -->
+      <div class="mb-10 text-center">
+        <p
+          class="text-[10px] text-slate-500 font-bold mb-6 bg-white py-2 px-4 rounded-full inline-flex items-center gap-1.5 shadow-sm border border-slate-100 leading-relaxed tracking-tight"
+        >
+          <i data-lucide="info" class="w-3.5 h-3.5 text-blue-500"></i>
+          당일 상황과 엔지니어 판단에 따라 변경될 수 있습니다.
+        </p>
+
+        <!-- 탭 버튼 -->
+        <div
+          class="inline-flex p-1.5 bg-slate-200/50 rounded-2xl w-full border border-slate-100 shadow-inner"
+        >
+          <button
+            id="btn-standard"
+            onclick="switchPreview('standard')"
+            class="flex-1 py-3 rounded-xl font-black text-sm bg-white text-blue-600 shadow-md transition-all"
+          >
+            일반 세팅
+          </button>
+          <button
+            id="btn-event"
+            onclick="switchPreview('event')"
+            class="flex-1 py-3 rounded-xl font-black text-sm text-slate-500 transition-all"
+          >
+            홍명기(행사)
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- 1. 일반 세팅 컨텐츠 -->
+      <!-- ============================================== -->
+      <div id="view-standard" class="space-y-6 fade-in">
+        <!-- Session Setup -->
+        <section class="sector-card">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-2xl font-black text-slate-900 mb-1">Session</h2>
+              <p
+                class="text-[10px] font-bold text-purple-500 tracking-tighter uppercase"
+              >
+                악기 연결 흐름도
+              </p>
+            </div>
+            <span class="tag tag-session">세션</span>
+          </div>
+
+          <div class="space-y-4">
+            <div
+              class="bg-slate-900 rounded-3xl p-5 shadow-inner border border-slate-800"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="guitar"
+                    class="mb-2 w-6 h-6 text-emerald-400"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >악기</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-purple-400 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i data-lucide="box" class="text-purple-500 mb-2 w-6 h-6"></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >DI</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-blue-400 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-blue-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >믹서</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-slate-900 rounded-3xl p-5 shadow-inner border border-slate-800"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders-horizontal"
+                    class="text-cyan-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >P16M</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-slate-600 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="database"
+                    class="text-cyan-600 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >P16D</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-slate-600 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-blue-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >믹서</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Singer Setup -->
+        <section class="sector-card">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-2xl font-black text-slate-900 mb-1">Singer</h2>
+              <p
+                class="text-[10px] font-bold text-blue-500 tracking-tighter uppercase"
+              >
+                보컬 마이크 연결
+              </p>
+            </div>
+            <span class="tag tag-singer">싱어</span>
+          </div>
+
+          <div class="space-y-4">
+            <div
+              class="bg-slate-900 rounded-3xl p-6 shadow-inner border border-slate-800"
+            >
+              <div class="flex items-center justify-between px-2">
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i data-lucide="mic-2" class="mb-2 w-6 h-6 text-blue-400"></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >마이크</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-blue-400 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i data-lucide="radio" class="text-blue-400 mb-2 w-6 h-6"></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >수신기</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-blue-400 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-blue-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >믹서</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Speaker Setup -->
+        <section class="sector-card">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-2xl font-black text-slate-900 mb-1">Speaker</h2>
+              <p
+                class="text-[10px] font-bold text-orange-500 tracking-tighter uppercase"
+              >
+                메인 출력 세팅
+              </p>
+            </div>
+            <span class="tag tag-speaker">출력</span>
+          </div>
+
+          <div
+            class="bg-slate-900 rounded-3xl p-8 shadow-inner border border-slate-800"
+          >
+            <div class="flex items-center justify-center gap-12">
+              <div class="flex flex-col items-center w-14 text-white">
+                <i data-lucide="sliders" class="text-blue-500 mb-2 w-6 h-6"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest"
+                  >믹서</span
+                >
+              </div>
+              <div class="flex gap-1">
+                <i
+                  data-lucide="chevron-right"
+                  class="text-orange-400 w-5 h-5 animate-pulse-flow-1"
+                ></i>
+                <i
+                  data-lucide="chevron-right"
+                  class="text-orange-400 w-5 h-5 animate-pulse-flow-2"
+                ></i>
+              </div>
+              <div class="flex flex-col items-center w-14 text-white">
+                <i
+                  data-lucide="volume-2"
+                  class="text-orange-500 mb-2 w-6 h-6"
+                ></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest"
+                  >스피커</span
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- 2. 홍명기(행사) 세팅 컨텐츠 -->
+      <!-- ============================================== -->
+      <div id="view-event" class="hidden space-y-6 fade-in">
+        <!-- Event Session -->
+        <section class="sector-card">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-2xl font-black text-slate-900 mb-1">Session</h2>
+              <p
+                class="text-[10px] font-bold text-purple-600 tracking-tighter uppercase"
+              >
+                디지털 스네이크(S16) 확장 세팅
+              </p>
+            </div>
+            <span class="tag tag-session">세션</span>
+          </div>
+
+          <div class="space-y-4">
+            <div
+              class="bg-slate-900 rounded-3xl p-5 shadow-inner border border-indigo-500/30"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex flex-col items-center w-10 text-white">
+                  <i
+                    data-lucide="guitar"
+                    class="w-5 h-5 mb-2 text-emerald-400"
+                  ></i>
+                  <span class="text-[8px] font-bold uppercase tracking-widest"
+                    >악기</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-purple-400 w-3 h-3 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-10 text-white">
+                  <i data-lucide="box" class="text-purple-500 w-5 h-5 mb-2"></i>
+                  <span class="text-[8px] font-bold uppercase tracking-widest"
+                    >DI</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-indigo-400 w-3 h-3 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-10 text-white">
+                  <i
+                    data-lucide="database"
+                    class="text-indigo-500 w-5 h-5 mb-2"
+                  ></i>
+                  <span class="text-[8px] font-bold uppercase tracking-widest"
+                    >S16</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-blue-400 w-3 h-3 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-10 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-blue-500 w-5 h-5 mb-2"
+                  ></i>
+                  <span class="text-[8px] font-bold uppercase tracking-widest"
+                    >믹서</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-slate-900 rounded-3xl p-5 shadow-inner border border-slate-800"
+            >
+              <div class="flex items-center justify-between px-4">
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders-horizontal"
+                    class="text-cyan-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >P16M</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-slate-600 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="database"
+                    class="text-cyan-600 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >P16D</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-slate-600 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-blue-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >믹서</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Event Singer -->
+        <section class="sector-card">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-2xl font-black text-slate-900 mb-1">Singer</h2>
+              <p
+                class="text-[10px] font-bold text-blue-600 tracking-tighter uppercase"
+              >
+                보컬 세팅
+              </p>
+            </div>
+            <span class="tag tag-singer">싱어</span>
+          </div>
+
+          <div class="space-y-4">
+            <div
+              class="bg-slate-900 rounded-3xl p-6 shadow-inner border border-slate-800"
+            >
+              <div class="flex items-center justify-between px-2">
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i data-lucide="mic-2" class="mb-2 w-6 h-6 text-blue-400"></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >마이크</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-blue-400 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i data-lucide="radio" class="text-blue-400 mb-2 w-6 h-6"></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >수신기</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-blue-400 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-blue-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >믹서</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-slate-900 rounded-3xl p-5 shadow-inner border border-slate-800"
+            >
+              <div class="flex items-center justify-between px-4">
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders-horizontal"
+                    class="text-cyan-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >P16M</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-slate-600 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="database"
+                    class="text-cyan-600 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >P16D</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-slate-600 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-blue-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >믹서</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Event Speaker -->
+        <section class="sector-card">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-2xl font-black text-slate-900 mb-1">Speaker</h2>
+              <p
+                class="text-[10px] font-bold text-orange-600 tracking-tighter uppercase"
+              >
+                홀 확장 출력
+              </p>
+            </div>
+            <span class="tag tag-speaker">출력</span>
+          </div>
+
+          <div class="space-y-4">
+            <div
+              class="bg-slate-900 rounded-3xl p-6 shadow-inner border border-slate-800"
+            >
+              <div class="flex items-center justify-center gap-10">
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-blue-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >믹서</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-orange-400 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="volume-2"
+                    class="text-orange-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >스피커</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- 예향/홀 연결 흐름도 -->
+            <div
+              class="bg-slate-900 rounded-3xl p-6 border border-emerald-500/30 shadow-inner"
+            >
+              <div class="flex items-center justify-between px-2">
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-emerald-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span
+                    class="text-[9px] font-bold uppercase tracking-widest text-emerald-400"
+                    >예향</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-emerald-400 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="sliders"
+                    class="text-blue-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span
+                    class="text-[9px] font-bold uppercase tracking-widest text-blue-400"
+                    >홀(믹서)</span
+                  >
+                </div>
+                <div class="flex gap-0.5">
+                  <i
+                    data-lucide="chevron-right"
+                    class="text-orange-400 w-4 h-4 animate-pulse-flow-1"
+                  ></i>
+                </div>
+                <div class="flex flex-col items-center w-14 text-white">
+                  <i
+                    data-lucide="volume-2"
+                    class="text-orange-500 mb-2 w-6 h-6"
+                  ></i>
+                  <span class="text-[9px] font-bold uppercase tracking-widest"
+                    >스피커</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- 하단 복귀 버튼 (기존 파일들과 동일한 스타일 적용) -->
+    <div class="fixed bottom-6 right-6 z-50">
+      <a
+        href="index.html"
+        class="w-14 h-14 bg-slate-900 text-white rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.3)] flex items-center justify-center active:scale-90 transition-all border border-white/10 ring-4 ring-white/10"
+      >
+        <i data-lucide="home" class="w-6 h-6"></i>
+      </a>
+    </div>
+
+    <script>
+      lucide.createIcons();
+
+      // 탭 전환 함수
+      function switchPreview(type) {
+        const viewStandard = document.getElementById("view-standard");
+        const viewEvent = document.getElementById("view-event");
+        const btnStandard = document.getElementById("btn-standard");
+        const btnEvent = document.getElementById("btn-event");
+
+        // 기본 활성화 스타일
+        const activeClass =
+          "flex-1 py-3 rounded-xl font-black text-sm bg-white text-blue-600 shadow-md transition-all";
+        // 비활성화 스타일
+        const inactiveClass =
+          "flex-1 py-3 rounded-xl font-black text-sm text-slate-500 transition-all";
+
+        if (type === "standard") {
+          viewStandard.classList.remove("hidden");
+          viewEvent.classList.add("hidden");
+
+          btnStandard.className = activeClass;
+          btnEvent.className = inactiveClass;
+        } else {
+          viewStandard.classList.add("hidden");
+          viewEvent.classList.remove("hidden");
+
+          btnEvent.className = activeClass;
+          btnStandard.className = inactiveClass;
+        }
+      }
+    </script>
+  </body>
+</html>

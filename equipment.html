@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>장비 상세 매뉴얼</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background-color: #f1f5f9;
+        color: #0f172a;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* 입체적인 섹터 카드 디자인 */
+      .sector-card {
+        background: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 2.5rem;
+        padding: 2.5rem 1.5rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05),
+          0 20px 40px -10px rgba(0, 0, 0, 0.03),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        margin-bottom: 2.5rem;
+        position: relative;
+      }
+
+      .inner-card-concave {
+        background: #f8fafc;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+      }
+
+      /* 클릭 가능한 리스트 아이템에 적용할 볼록한 카드 스타일 */
+      .inner-card-convex {
+        background: #ffffff;
+        border-radius: 1.5rem;
+        padding: 1.25rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+          0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f8fafc;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .inner-card-convex:active {
+        transform: scale(0.97);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        background: #f8fafc;
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 0.35rem 0.85rem;
+        border-radius: 9999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .tag-common {
+        background: #d1fae5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+      }
+      .tag-singer {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+      }
+      .tag-session {
+        background: #f3e8ff;
+        color: #6b21a8;
+        border: 1px solid #e9d5ff;
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 모달 활성화 시 배경 스크롤 방지 */
+      body.modal-open {
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen pb-32 relative">
+    <!-- 상단 네비게이션 -->
+    <nav
+      class="sticky top-0 bg-white/70 backdrop-blur-xl border-b border-white/20 z-40"
+    >
+      <div class="max-w-md mx-auto px-6 h-20 flex items-center justify-between">
+        <a
+          href="index.html"
+          class="p-2 bg-slate-100 rounded-full hover:bg-white transition-all shadow-inner active:scale-95"
+        >
+          <i data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i>
+        </a>
+        <h2
+          class="font-black text-slate-900 text-xs tracking-widest uppercase flex-1 text-center"
+        >
+          장비 매뉴얼
+        </h2>
+        <div class="w-9"></div>
+      </div>
+    </nav>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="w-full max-w-md mx-auto px-6 mt-10 fade-in">
+      <!-- 0. 공통 (Common) 섹터 -->
+      <section class="sector-card">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-1">Common</h2>
+            <p
+              class="text-[10px] font-bold text-emerald-500 tracking-tighter uppercase"
+            >
+              공통 장비 설정
+            </p>
+          </div>
+          <span class="tag tag-common">공통</span>
+        </div>
+
+        <div class="space-y-3">
+          <!-- P16 개인 모니터 -->
+          <div
+            onclick="openModal('p16')"
+            class="inner-card-convex flex items-center gap-4 cursor-pointer group"
+          >
+            <div
+              class="w-12 h-12 rounded-2xl bg-cyan-50 flex items-center justify-center shadow-inner group-hover:bg-cyan-500 transition-colors duration-300"
+            >
+              <i
+                data-lucide="sliders-horizontal"
+                class="w-6 h-6 text-cyan-600 group-hover:text-white transition-colors duration-300"
+              ></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-black text-slate-800 text-sm uppercase">
+                P16 개인 모니터
+              </h4>
+              <p
+                class="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-0.5"
+              >
+                Personal Monitor
+              </p>
+            </div>
+            <i
+              data-lucide="chevron-right"
+              class="w-5 h-5 text-slate-300 group-hover:text-cyan-500 transition-colors"
+            ></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1. 싱어 (Singer) 섹터 -->
+      <section class="sector-card">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-1">Singer</h2>
+            <p
+              class="text-[10px] font-bold text-blue-500 tracking-tighter uppercase"
+            >
+              싱어 장비 설정
+            </p>
+          </div>
+          <span class="tag tag-singer">보컬</span>
+        </div>
+
+        <div class="space-y-3">
+          <!-- 마이크 (Mic) -->
+          <div
+            onclick="openModal('mic')"
+            class="inner-card-convex flex items-center gap-4 cursor-pointer group"
+          >
+            <div
+              class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center shadow-inner group-hover:bg-blue-600 transition-colors duration-300"
+            >
+              <i
+                data-lucide="mic-2"
+                class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors duration-300"
+              ></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-black text-slate-800 text-sm uppercase">
+                마이크 (Mic)
+              </h4>
+              <p
+                class="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-0.5"
+              >
+                Wired & Wireless Setup
+              </p>
+            </div>
+            <i
+              data-lucide="chevron-right"
+              class="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors"
+            ></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 세션 (Session) 섹터 -->
+      <section class="sector-card">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-1">Session</h2>
+            <p
+              class="text-[10px] font-bold text-purple-500 tracking-tighter uppercase"
+            >
+              세션 장비 설정
+            </p>
+          </div>
+          <span class="tag tag-session">악기</span>
+        </div>
+
+        <div class="space-y-3">
+          <!-- DI 박스 -->
+          <div
+            onclick="openModal('di')"
+            class="inner-card-convex flex items-center gap-4 cursor-pointer group"
+          >
+            <div
+              class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center shadow-inner group-hover:bg-purple-600 transition-colors duration-300"
+            >
+              <i
+                data-lucide="box"
+                class="w-6 h-6 text-purple-600 group-hover:text-white transition-colors duration-300"
+              ></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-black text-slate-800 text-sm uppercase">
+                DI 박스 (DI-100)
+              </h4>
+              <p
+                class="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-0.5"
+              >
+                Signal Convert / Pad / Lift
+              </p>
+            </div>
+            <i
+              data-lucide="chevron-right"
+              class="w-5 h-5 text-slate-300 group-hover:text-purple-500 transition-colors"
+            ></i>
+          </div>
+
+          <!-- 디지털 스네이크 S16 -->
+          <div
+            onclick="openModal('s16')"
+            class="inner-card-convex flex items-center gap-4 cursor-pointer group"
+          >
+            <div
+              class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center shadow-inner group-hover:bg-indigo-600 transition-colors duration-300"
+            >
+              <i
+                data-lucide="database"
+                class="w-6 h-6 text-indigo-600 group-hover:text-white transition-colors duration-300"
+              ></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-black text-slate-800 text-sm uppercase">
+                디지털 스네이크 S16
+              </h4>
+              <p
+                class="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-0.5"
+              >
+                Digital Stage Box I/O
+              </p>
+            </div>
+            <i
+              data-lucide="chevron-right"
+              class="w-5 h-5 text-slate-300 group-hover:text-indigo-500 transition-colors"
+            ></i>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 하단 복귀 버튼 -->
+    <div class="fixed bottom-6 right-6 z-40">
+      <a
+        href="index.html"
+        class="w-14 h-14 bg-slate-900 text-white rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.3)] flex items-center justify-center active:scale-90 transition-all border border-white/10 ring-4 ring-white/10"
+      >
+        <i data-lucide="home" class="w-6 h-6"></i>
+      </a>
+    </div>
+
+    <!-- 팝업 모달 배경 및 컨테이너 -->
+    <div
+      id="modal-container"
+      class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-300"
+    >
+      <!-- 배경 오버레이 (클릭 시 닫힘) -->
+      <div
+        class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+        onclick="closeModal()"
+      ></div>
+
+      <!-- 모달 콘텐츠 박스 -->
+      <div
+        id="modal-content"
+        class="relative w-full max-w-md bg-white rounded-[2.5rem] p-6 shadow-2xl transform translate-y-10 sm:translate-y-4 scale-95 transition-all duration-300 border border-white/50"
+      >
+        <!-- 모달 헤더 (JS에서 동적 주입) -->
+        <div id="modal-header" class="flex items-start justify-between mb-6">
+          <!-- 헤더 내용이 주입될 위치 -->
+        </div>
+
+        <!-- 모달 바디 (JS에서 동적 주입) -->
+        <div
+          id="modal-body"
+          class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 pb-4 -mr-2 scrollbar-hide"
+        >
+          <!-- 상세 설명이 주입될 위치 -->
+        </div>
+
+        <!-- 닫기 버튼 (하단) -->
+        <button
+          onclick="closeModal()"
+          class="w-full mt-4 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-2xl transition-colors shadow-inner active:scale-[0.98]"
+        >
+          확인했습니다
+        </button>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+
+      // 장비별 상세 가이드 데이터 설정
+      const equipmentData = {
+        mic: {
+          icon: "mic-2",
+          iconBg: "bg-blue-100 text-blue-600",
+          title: "마이크 가이드",
+          subtitle: "유선 및 무선 마이크",
+          html: `
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 class="text-xs font-black text-blue-600 mb-1 flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> 그릴 밀착 주의</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">마이크 머리(그릴) 부분을 손으로 감싸 쥐면 수음 패턴이 변형되어 <strong>하울링(피드백)</strong>의 원인이 됩니다. 반드시 마이크 몸통을 잡아주세요.</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 class="text-xs font-black text-blue-600 mb-1 flex items-center gap-1.5"><i data-lucide="cable" class="w-3.5 h-3.5"></i> 유선 마이크 (Wired)</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">XLR 케이블로 직접 연결하여 <strong>안정적인 신호 전송</strong>이 가능하며 별도의 배터리가 필요 없습니다. 이동 시 케이블이 발에 걸리지 않도록 주의하세요.</p>
+            </div>
+            <div class="p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50">
+              <h4 class="text-[10px] font-black text-blue-500 uppercase mb-1 flex items-center gap-1.5"><i data-lucide="radio" class="w-3.5 h-3.5"></i> 무선 마이크 (Wireless)</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">무대 위에서 자유로운 이동이 장점입니다. 사용 전 반드시 <strong>배터리 잔량</strong>을 확인하고, 마이크 전원을 켠 후 수신기와 연결(RF 신호)이 정상인지 체크하세요.</p>
+            </div>
+          `,
+        },
+        p16: {
+          icon: "sliders-horizontal",
+          iconBg: "bg-cyan-100 text-cyan-600",
+          title: "P16 개인 모니터",
+          subtitle: "나만의 모니터링 환경 만들기",
+          html: `
+            <div class="flex items-center justify-center py-4 bg-slate-800 rounded-2xl mb-4 shadow-inner">
+               <div class="text-center">
+                   <i data-lucide="headphones" class="w-8 h-8 text-cyan-400 mx-auto mb-2"></i>
+                   <span class="text-[9px] text-slate-400 font-bold tracking-widest uppercase">Personal Monitor</span>
+               </div>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 class="text-xs font-black text-cyan-600 mb-1 flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i> P16이란?</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">연주자나 싱어가 무대 위에서 <strong>자신이 듣고 싶은 소리(마이크, 악기 등)의 볼륨을 직접 조절</strong>할 수 있게 해주는 장비입니다. 메인 스피커의 소리와는 별개로 내 이어폰의 소리만 독립적으로 바꿉니다.</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 class="text-xs font-black text-cyan-600 mb-1 flex items-center gap-1.5"><i data-lucide="music" class="w-3.5 h-3.5"></i> 왜 필요한가요?</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">엔지니어에게 매번 볼륨을 요청할 필요 없이, 즉각적으로 <strong>나에게 가장 편안한 밸런스</strong>를 맞출 수 있어 연주와 노래에 더욱 몰입할 수 있도록 돕습니다.</p>
+            </div>
+          `,
+        },
+        di: {
+          icon: "box",
+          iconBg: "bg-purple-100 text-purple-600",
+          title: "DI 박스 설정",
+          subtitle: "악기 신호 변환 및 노이즈 관리",
+          html: `
+            <div class="p-4 bg-rose-50 rounded-2xl border border-rose-100">
+              <h4 class="text-xs font-black text-rose-600 mb-1 flex items-center gap-1.5"><i data-lucide="volume-x" class="w-3.5 h-3.5"></i> 조작 전 뮤트 확인</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">DI 박스 스위치를 조작하거나 케이블을 연결/해제하기 전, <strong>반드시 엔지니어에게 해당 악기 채널의 뮤트(음소거) 상황을 확인</strong>한 후 조작하세요. (큰 파열음으로 인한 스피커 손상 방지)</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 class="text-xs font-black text-purple-600 mb-1 flex items-center gap-1.5"><i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i> 언밸런스 → 밸런스</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">기타나 건반의 노이즈에 취약한 언밸런스(TS) 신호를, 장거리 전송에 유리한 <strong>안정적인 밸런스(XLR) 신호</strong>로 변환해 믹서로 보냅니다.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <h4 class="text-[11px] font-black text-slate-800 mb-1">GND LIFT</h4>
+                <p class="text-[10px] text-slate-500 leading-relaxed">'웅~' 하는 전기 노이즈가 들릴 때 이 버튼을 눌러(In) 접지 루프를 끊어줍니다.</p>
+              </div>
+              <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <h4 class="text-[11px] font-black text-slate-800 mb-1">PAD 스위치</h4>
+                <p class="text-[10px] text-slate-500 leading-relaxed">건반이나 액티브 베이스처럼 출력이 너무 강해 소리가 찢어질 때 -20dB 버튼을 누릅니다.</p>
+              </div>
+            </div>
+          `,
+        },
+        s16: {
+          icon: "database",
+          iconBg: "bg-indigo-100 text-indigo-600",
+          title: "디지털 스네이크 S16",
+          subtitle: "무대 입출력 확장 장치",
+          html: `
+            <div class="flex items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-100 mb-4">
+              <div class="text-center">
+                 <div class="inline-block p-2 bg-indigo-100 text-indigo-700 font-black text-xs rounded-lg mb-1">AES50 A/B</div>
+                 <p class="text-[10px] text-slate-500">랜선(Cat5e) 하나로 32채널 신호 전송</p>
+              </div>
+            </div>
+            <div class="p-4 bg-rose-50 rounded-2xl border border-rose-100">
+              <h4 class="text-xs font-black text-rose-600 mb-1 flex items-center gap-1.5"><i data-lucide="volume-x" class="w-3.5 h-3.5"></i> 연결/해제 전 뮤트 확인</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">S16에 케이블을 연결하거나 뽑기 전, <strong>반드시 엔지니어에게 해당 채널의 뮤트(음소거) 상황을 확인</strong>하세요. (큰 파열음으로 인한 스피커 손상 방지)</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 class="text-xs font-black text-indigo-600 mb-1 flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i> 디지털 스네이크란?</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">무대 위 악기와 마이크 선들을 한 곳에 모아, <strong>단 한 가닥의 랜선</strong>으로 멀리 떨어진 메인 믹서까지 신호를 한 번에 보내주는 입출력 확장 장비입니다. 무겁고 복잡한 아날로그 멀티 케이블을 깔끔하게 대체합니다.</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 class="text-xs font-black text-indigo-600 mb-1 flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5"></i> 팬텀 파워 (+48V)</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">콘덴서 마이크나 액티브 DI 박스 연결 시 해당 채널에 <strong>빨간색 LED(+48V)</strong>가 들어와 있는지 확인하세요. 믹서에서 전원을 공급 중이라는 뜻입니다.</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 class="text-xs font-black text-indigo-600 mb-1 flex items-center gap-1.5"><i data-lucide="plug" class="w-3.5 h-3.5"></i> 케이블 결합/해제</h4>
+              <p class="text-[11px] text-slate-600 leading-relaxed">XLR 케이블을 뺄 때는 반드시 단자 상단의 <strong>잠금 해제 버튼(PUSH)</strong>을 누른 상태에서 당겨야 장비 손상을 막을 수 있습니다.</p>
+            </div>
+          `,
+        },
+      };
+
+      // 모달 열기
+      function openModal(id) {
+        const data = equipmentData[id];
+        if (!data) return;
+
+        // 1. 헤더 HTML 구성
+        const headerHTML = `
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl ${data.iconBg} flex items-center justify-center shadow-inner">
+              <i data-lucide="${data.icon}" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-slate-900 leading-tight">${data.title}</h3>
+              <p class="text-[10px] font-bold text-slate-400 tracking-tighter uppercase mt-0.5">${data.subtitle}</p>
+            </div>
+          </div>
+          <button onclick="closeModal()" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors active:scale-90">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        `;
+        document.getElementById("modal-header").innerHTML = headerHTML;
+
+        // 2. 바디 HTML 구성
+        document.getElementById("modal-body").innerHTML = data.html;
+
+        // 3. 새로 주입된 HTML 요소 안의 아이콘 렌더링
+        lucide.createIcons();
+
+        // 4. 모달 나타내기 (애니메이션 클래스 토글)
+        const container = document.getElementById("modal-container");
+        const content = document.getElementById("modal-content");
+
+        container.classList.remove("opacity-0", "pointer-events-none");
+        container.classList.add("opacity-100", "pointer-events-auto");
+
+        content.classList.remove(
+          "translate-y-10",
+          "sm:translate-y-4",
+          "scale-95"
+        );
+        content.classList.add("translate-y-0", "scale-100");
+
+        // 배경 스크롤 잠금
+        document.body.classList.add("modal-open");
+      }
+
+      // 모달 닫기
+      function closeModal() {
+        const container = document.getElementById("modal-container");
+        const content = document.getElementById("modal-content");
+
+        container.classList.remove("opacity-100", "pointer-events-auto");
+        container.classList.add("opacity-0", "pointer-events-none");
+
+        content.classList.remove("translate-y-0", "scale-100");
+        content.classList.add("translate-y-10", "sm:translate-y-4", "scale-95");
+
+        // 배경 스크롤 잠금 해제
+        document.body.classList.remove("modal-open");
+      }
+    </script>
+  </body>
+</html>
